@@ -19,19 +19,15 @@ class Player:SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    func killZombie(){
-        synthesizer.speakUtterance(getUtterance("bähä"))
-    }
-    
     func goal(){
-        synthesizer.speakUtterance(getUtterance("jippiii"))
+        synthesizer.speakUtterance(getUtterance("yes me the big billy goat scored"))
     }
     
     func getUtterance(words:String) -> AVSpeechUtterance{
         let utterance = AVSpeechUtterance(string: words)
-        utterance.rate = 0.3
-        utterance.pitchMultiplier = 0.3
-        utterance.voice = AVSpeechSynthesisVoice(language: "sv-SE")
+        utterance.rate = 1.0
+        utterance.pitchMultiplier = 0.5
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-GB")
         return utterance
     }
     

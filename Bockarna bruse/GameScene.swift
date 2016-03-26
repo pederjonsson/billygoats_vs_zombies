@@ -25,11 +25,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball: SKSpriteNode!
     var lastTouch: CGPoint? = nil
     
-    
-    //MARK: Actions
-    
-    let kill = SKAction.removeFromParent()
-    
     // MARK: - SKScene
     
     override func didMoveToView(view: SKView) {
@@ -40,12 +35,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player = self.childNodeWithName("player") as? Player
         ball = self.childNodeWithName("ball") as! SKSpriteNode
        
+        //the sound is relative to where the player is
         self.listener = player
         
         // Setup zombies
         for child in self.children {
             if child.name == "zombie" {
                 if let child = child as? SKSpriteNode {
+                    
+                    //kind of funny sound but annoying after a while
                     // Add SKAudioNode to zombie
                     //let audioNode: SKAudioNode = SKAudioNode(fileNamed: "fear_moan.wav")
                     //child.addChild(audioNode)
@@ -55,13 +53,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             else if child.name == "playerGoat" {
                 if let child:PlayerGoat = child as? PlayerGoat {
-                    child.alive = true
                     playerGoats.append(child)
                     if(playerGoats.count > 1){
+                        //change to pass in speed in constructor instead
                         child.normalSpeed = 150
                     }
                 }
             }
+            //goals is the goal sprites, if ball hits it, register a score for either team
             else if child.name == "goal" {
                 if let child = child as? SKSpriteNode {
                     goals.append(child)
@@ -71,6 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Setup initial camera position
         updateCamera()
+        
         commentator = Commentator()
         commentator!.presentGame()
     }
@@ -99,7 +99,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     // MARK - Updates
-    
     override func didSimulatePhysics() {
         if(!scoredGoal){
             if let _ = player {
@@ -108,7 +107,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 updateZombies()
             }
         }
-        
     }
     
     // Determines if the player's position should be updated
@@ -140,139 +138,114 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    // make camera start where player is
     func updateCamera() {
         if let camera = camera {
             camera.position = CGPoint(x: player!.position.x, y: player!.position.y)
         }
     }
     
-    // Updates the position of all zombies by moving towards the player
+    // Updates the position of all zombies by moving towards whatever is closest
     func updateZombies() {
         let playerGoat1 = playerGoats[0]
         let playerGoat2 = playerGoats[1]
         
-        if(playerGoat1.alive || playerGoat2.alive){
-            for zombie in zombies {
-                let currentPosition = zombie.position
-                
-                let dx1:CGFloat = currentPosition.x - playerGoat1.position.x;
-                let dy1:CGFloat = currentPosition.y - playerGoat1.position.y;
-                
-                let dx2:CGFloat = currentPosition.x - playerGoat2.position.x;
-                let dy2:CGFloat = currentPosition.y - playerGoat2.position.y;
-                
-                let dx3:CGFloat = currentPosition.x - ball.position.x;
-                let dy3:CGFloat = currentPosition.y - ball.position.y;
-                
-                let dx4:CGFloat = currentPosition.x - player.position.x;
-                let dy4:CGFloat = currentPosition.y - player.position.y;
-                
-                let distance1:CGFloat = sqrt(dx1*dx1+dy1*dy1);
-                let distance2:CGFloat = sqrt(dx2*dx2+dy2*dy2);
-                let distance3:CGFloat = sqrt(dx3*dx3+dy3*dy3);
-                let distance4:CGFloat = sqrt(dx4*dx4+dy4*dy4);
-                
-                var targetPosition:CGPoint
-                
-              //  if(playerGoat1.alive && playerGoat2.alive){
-                    if(distance1 >= distance2){
-                        if(distance2 >= distance3){
-                            if(distance3 >= distance4){
-                                targetPosition = player.position
-                            }
-                            else{
-                                targetPosition = ball.position
-                            }
-                            
-                        }
-                        else{
-                            
-                            if(distance2 >= distance4){
-                                targetPosition = player.position
-                            }
-                            else{
-                                targetPosition = playerGoat2.position
-                            }
-                        }
+        for zombie in zombies {
+            let currentPosition = zombie.position
+            
+            // get the distance from two small goats, the ball and the player goat and
+            // make the zombies chase whatever is closest
+            let dx1:CGFloat = currentPosition.x - playerGoat1.position.x;
+            let dy1:CGFloat = currentPosition.y - playerGoat1.position.y;
+            
+            let dx2:CGFloat = currentPosition.x - playerGoat2.position.x;
+            let dy2:CGFloat = currentPosition.y - playerGoat2.position.y;
+            
+            let dx3:CGFloat = currentPosition.x - ball.position.x;
+            let dy3:CGFloat = currentPosition.y - ball.position.y;
+            
+            let dx4:CGFloat = currentPosition.x - player.position.x;
+            let dy4:CGFloat = currentPosition.y - player.position.y;
+            
+            let distance1:CGFloat = sqrt(dx1*dx1+dy1*dy1);
+            let distance2:CGFloat = sqrt(dx2*dx2+dy2*dy2);
+            let distance3:CGFloat = sqrt(dx3*dx3+dy3*dy3);
+            let distance4:CGFloat = sqrt(dx4*dx4+dy4*dy4);
+            
+            var targetPosition:CGPoint
+            
+            if(distance1 >= distance2){
+                if(distance2 >= distance3){
+                    if(distance3 >= distance4){
+                        targetPosition = player.position
                     }
                     else{
-                        if(distance1 >= distance3){
-                            if(distance3 >= distance4){
-                                targetPosition = player.position
-                            }
-                            else{
-                                targetPosition = ball.position
-                            }
-                            
-                        }
-                        else{
-                            if(distance1 >= distance4){
-                                targetPosition = player.position
-                            }
-                            else{
-                                targetPosition = playerGoat1.position
-                            }
-                        }
+                        targetPosition = ball.position
                     }
-                
+                }
+                else{
                     
-                /*}else{
-                    
-                    targetPosition = playerGoat2.position
-                    
-                    if(playerGoat1.alive){
+                    if(distance2 >= distance4){
+                        targetPosition = player.position
+                    }
+                    else{
+                        targetPosition = playerGoat2.position
+                    }
+                }
+            }
+            else{
+                if(distance1 >= distance3){
+                    if(distance3 >= distance4){
+                        targetPosition = player.position
+                    }
+                    else{
+                        targetPosition = ball.position
+                    }
+                }
+                else{
+                    if(distance1 >= distance4){
+                        targetPosition = player.position
+                    }
+                    else{
                         targetPosition = playerGoat1.position
                     }
-                }*/
-                
-                let angle = atan2(currentPosition.y - targetPosition.y, currentPosition.x - targetPosition.x) + CGFloat(M_PI)
-                let rotateAction = SKAction.rotateToAngle(angle + CGFloat(M_PI*0.5), duration: 0.0)
-                zombie.runAction(rotateAction)
-                
-                let velocotyX = zombieSpeed * cos(angle)
-                let velocityY = zombieSpeed * sin(angle)
-                
-                let newVelocity = CGVector(dx: velocotyX, dy: velocityY)
-                zombie.physicsBody!.velocity = newVelocity;
-                
+                }
             }
+            
+            let angle = atan2(currentPosition.y - targetPosition.y, currentPosition.x - targetPosition.x) + CGFloat(M_PI)
+            let rotateAction = SKAction.rotateToAngle(angle + CGFloat(M_PI*0.5), duration: 0.0)
+            zombie.runAction(rotateAction)
+            
+            let velocotyX = zombieSpeed * cos(angle)
+            let velocityY = zombieSpeed * sin(angle)
+            
+            let newVelocity = CGVector(dx: velocotyX, dy: velocityY)
+            zombie.physicsBody!.velocity = newVelocity;
+            
         }
+        
         
     }
     
-    // Updates the position of all smaller goats by moving towards the player
+    // Updates the position of all smaller goats by moving towards the ball
     func updatePlayerGoats() {
         
         let targetPosition = ball!.position
         
         for playerGoat in playerGoats {
+            let currentPosition = playerGoat.position
             
-            if(playerGoat.alive){
-                let currentPosition = playerGoat.position
-                
-               /* let dx:CGFloat = currentPosition.x - targetPosition.x;
-                let dy:CGFloat = currentPosition.y - targetPosition.y;
-                
-                let distance:CGFloat = sqrt(dx*dx+dy*dy);
-                */
-                // Check if the two nodes are close
-                //if (distance >= playerGoat.kMaxDistance) {
-                    // Do something
-                    
-                    let angle = atan2(currentPosition.y - targetPosition.y, currentPosition.x - targetPosition.x) + CGFloat(M_PI)
-                    let rotateAction = SKAction.rotateToAngle(angle + CGFloat(M_PI*0.5), duration: 0.0)
-                    playerGoat.runAction(rotateAction)
-                    
-                    let velocotyX = playerGoat.normalSpeed * cos(angle)
-                    let velocityY = playerGoat.normalSpeed * sin(angle)
-                    
-                    let newVelocity = CGVector(dx: velocotyX, dy: velocityY)
-                    playerGoat.physicsBody!.velocity = newVelocity;
-                //}
-            }
+            let angle = atan2(currentPosition.y - targetPosition.y, currentPosition.x - targetPosition.x) + CGFloat(M_PI)
+            let rotateAction = SKAction.rotateToAngle(angle + CGFloat(M_PI*0.5), duration: 0.0)
+            playerGoat.runAction(rotateAction)
             
+            let velocotyX = playerGoat.normalSpeed * cos(angle)
+            let velocityY = playerGoat.normalSpeed * sin(angle)
             
+            let newVelocity = CGVector(dx: velocotyX, dy: velocityY)
+            playerGoat.physicsBody!.velocity = newVelocity;
         }
+        
     }
     
     
@@ -280,75 +253,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func didBeginContact(contact: SKPhysicsContact) {
         if(!scoredGoal){
+            
             // 1. Create local variables for two physics bodies
             var firstBody: SKPhysicsBody
             var secondBody: SKPhysicsBody
             
             // 2. Assign the two physics bodies so that the one with the lower category is always stored in firstBody
             
-            let contactAMask = contact.bodyA.categoryBitMask
-            let contactBMask = contact.bodyB.categoryBitMask
+            if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+                firstBody = contact.bodyA
+                secondBody = contact.bodyB
+            } else {
+                firstBody = contact.bodyB
+                secondBody = contact.bodyA
+            }
             
-            if(contactAMask != 2 && contactBMask != 3 || contactBMask != 2 && contactAMask != 3 ||  contactBMask != 3 && contactAMask != 3){
-                
-                if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
-                    firstBody = contact.bodyA
-                    secondBody = contact.bodyB
-                } else {
-                    firstBody = contact.bodyB
-                    secondBody = contact.bodyA
-                }
-                
-                // 3. react to the contact between the two nodes
-                if firstBody.categoryBitMask == player?.physicsBody?.categoryBitMask &&
-                    secondBody.categoryBitMask == zombies[0].physicsBody?.categoryBitMask {
-                        // Player & Zombie
-                        //player?.killZombie()
-                        //secondBody.node?.runAction(kill)
-                } else if firstBody.categoryBitMask == ball?.physicsBody?.categoryBitMask &&
-                    secondBody.categoryBitMask == goals[0].physicsBody?.categoryBitMask {
-                        // Player & Goal
-                        // player?.goal()
-                        commentator?.goal()
-                        scoredGoal = true
-                        gameOver(true)
-                        
-                }/* else if firstBody.categoryBitMask == playerGoats[0].physicsBody?.categoryBitMask &&
-                secondBody.categoryBitMask == zombies[0].physicsBody?.categoryBitMask {
-                // PlayerGoats & Zombie
-                let playerGoat:PlayerGoat = firstBody.node as! PlayerGoat
-                if(playerGoat.alive){
-                playerGoat.runAction(kill)
-                playerGoat.die()
-                
-                if(!isAnyGoatAlive()){
-                gameOver(true)
-                }
-                }
-                }*/
+            //handle goal scored
+            //TODO: differentiate on which goal that was scored on
+            // score label
+            if firstBody.categoryBitMask == ball?.physicsBody?.categoryBitMask &&
+                secondBody.categoryBitMask == goals[0].physicsBody?.categoryBitMask {
+                    
+                    commentator?.goal()
+                    
+                    // this should stop game and rearrange players for kickoff again
+                    scoredGoal = true
+                    
+                    //this should end game if time is up i guess?
+                    gameOver(true)
             }
-        
+            
         }
-        
-    }
-    
-    
-    func isAnyGoatAlive() -> Bool{
-    
-        for playerGoat in playerGoats{
-            if(playerGoat.alive){
-                return true
-            }
-        }
-        
-        return false
     }
     
     // MARK: Helper Functions
     
     private func gameOver(didWin: Bool) {
         print("- - - Game Ended - - -")
-      //  let menuScene = MenuScene(size: self.size)
+        //TODO: implement menuscene
+        
+        // let menuScene = MenuScene(size: self.size)
         //menuScene.soundToPlay = didWin ? "fear_win.mp3" : "fear_lose.mp3"
         //let transition = SKTransition.flipVerticalWithDuration(1.0)
         //menuScene.scaleMode = SKSceneScaleMode.AspectFill
