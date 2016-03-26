@@ -11,6 +11,8 @@ import SpriteKit
 
 class GameViewController: UIViewController {
 
+    @IBOutlet weak var scoreLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -25,7 +27,7 @@ class GameViewController: UIViewController {
             
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .AspectFill
-            
+            scene.scoreLabel = self.scoreLabel
             skView.presentScene(scene)
         }
     }

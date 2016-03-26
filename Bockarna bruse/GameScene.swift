@@ -24,12 +24,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var goals: [SKSpriteNode] = []
     var ball: SKSpriteNode!
     var lastTouch: CGPoint? = nil
+    var scoreLabel:UILabel!
     
     // MARK: - SKScene
     
     override func didMoveToView(view: SKView) {
         // Setup physics world's contact delegate
         physicsWorld.contactDelegate = self
+        
+        
         
         // Setup player
         player = self.childNodeWithName("player") as? Player
@@ -73,6 +76,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         commentator = Commentator()
         commentator!.presentGame()
+        
+        //setup score label
+        scoreLabel.text = "0 - 0"
+       
     }
     
     
@@ -184,7 +191,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 else{
-                    
                     if(distance2 >= distance4){
                         targetPosition = player.position
                     }
