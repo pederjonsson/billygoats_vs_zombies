@@ -111,8 +111,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(!scoredGoal){
             if let _ = player {
                 updatePlayer()
-               // updatePlayerGoats()
-                //updateZombies()
+                updatePlayerGoats()
+                updateZombies()
             }
         }
     }
