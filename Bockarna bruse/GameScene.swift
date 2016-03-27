@@ -19,6 +19,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scoredGoal = false
     var player: Player!
     var commentator:Commentator?
+    var gameStatus:GameStatus?
     var playerGoats: [PlayerGoat] = []
     var zombies: [SKSpriteNode] = []
     var goals: [SKSpriteNode] = []
@@ -77,8 +78,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         commentator = Commentator()
         commentator!.presentGame()
         
-        //setup score label
-        scoreLabel.text = "0 - 0"
+        //setup gamestatus
+        gameStatus = GameStatus(scoreLabel: scoreLabel)
        
     }
     
@@ -110,8 +111,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(!scoredGoal){
             if let _ = player {
                 updatePlayer()
-                updatePlayerGoats()
-                updateZombies()
+               // updatePlayerGoats()
+                //updateZombies()
             }
         }
     }
@@ -275,12 +276,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             //handle goal scored
-            //TODO: differentiate on which goal that was scored on
-            // score label
             if firstBody.categoryBitMask == ball?.physicsBody?.categoryBitMask &&
                 secondBody.categoryBitMask == goals[0].physicsBody?.categoryBitMask {
                     
-                    commentator?.goal()
+                    if(goals[0].physicsBody?.node === secondBody.node){
+                        gameStatus?.goalScoredByZombies()
+                        commentator?.goalByZombies()
+                    }
+                    else {
+                        gameStatus?.goalScoredByGoats()
+                        commentator?.goalByGoats()
+                    }
                     
                     // this should stop game and rearrange players for kickoff again
                     scoredGoal = true
@@ -288,7 +294,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     //this should end game if time is up i guess?
                     gameOver(true)
             }
-            
         }
     }
     

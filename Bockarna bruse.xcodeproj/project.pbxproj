@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		87056AFE1CA7A08800F4D36F /* GameStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87056AFD1CA7A08800F4D36F /* GameStatus.swift */; };
 		873810491CA6C8A90016D2DA /* Commentator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873810481CA6C8A90016D2DA /* Commentator.swift */; };
 		87C61FA61CA655FF0007CDFE /* PlayerGoat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C61FA51CA655FF0007CDFE /* PlayerGoat.swift */; };
 		87C61FA81CA66A2C0007CDFE /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C61FA71CA66A2C0007CDFE /* Player.swift */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		87056AFD1CA7A08800F4D36F /* GameStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStatus.swift; sourceTree = "<group>"; };
 		873810481CA6C8A90016D2DA /* Commentator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Commentator.swift; sourceTree = "<group>"; };
 		87C61FA51CA655FF0007CDFE /* PlayerGoat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerGoat.swift; sourceTree = "<group>"; };
 		87C61FA71CA66A2C0007CDFE /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 				87F517251CA4C1E700978DB0 /* Info.plist */,
 				87C61FA51CA655FF0007CDFE /* PlayerGoat.swift */,
 				87C61FA71CA66A2C0007CDFE /* Player.swift */,
+				87056AFD1CA7A08800F4D36F /* GameStatus.swift */,
 			);
 			path = "Bockarna bruse";
 			sourceTree = "<group>";
@@ -236,6 +239,7 @@
 				87F5171A1CA4C1E700978DB0 /* GameScene.swift in Sources */,
 				87F5171C1CA4C1E700978DB0 /* GameViewController.swift in Sources */,
 				87F517161CA4C1E700978DB0 /* AppDelegate.swift in Sources */,
+				87056AFE1CA7A08800F4D36F /* GameStatus.swift in Sources */,
 				87C61FA81CA66A2C0007CDFE /* Player.swift in Sources */,
 				87C61FA61CA655FF0007CDFE /* PlayerGoat.swift in Sources */,
 				873810491CA6C8A90016D2DA /* Commentator.swift in Sources */,
